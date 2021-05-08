@@ -8,6 +8,7 @@ grammar Jepeto;
     import main.ast.nodes.expression.values.*;
     import main.ast.nodes.expression.values.primitive.*;
     import main.ast.nodes.statement.*;
+    import java.util.LinkedHashMap;
     import java.util.HashMap;
     import java.util.Map;
 }
@@ -55,7 +56,7 @@ main returns[MainDeclaration _main]:
     {$_main.setLine($MAIN.line);}
     ;
 
-functionCall returns[FunctionCall _functionCall]:
+functionCall returns[FunctionCall _functionCall] :
     identifier (lpar1=LPAR a=functionArguments
     {
         $_functionCall = new FunctionCall($_functionCall, $a._args, $a._argsWithKey);
@@ -78,7 +79,7 @@ splitedExpressionsWithComma returns[ArrayList<Expression> _splitedExpressionsWit
     (COMMA b=expression {$_splitedExpressionsWithComma.add($b._expression);} )*)?
     ;
 
-splitedExpressionsWithCommaAndKey returns[Map<Identifier, Expression> _splitedExpressionsWithCommaAndKey = new HashMap<>()]:
+splitedExpressionsWithCommaAndKey returns[Map<Identifier, Expression> _splitedExpressionsWithCommaAndKey = new LinkedHashMap<>()]:
     (a=identifier ASSIGN b=expression {$_splitedExpressionsWithCommaAndKey.put($a._identifier, $b._expression);}
     (COMMA  c=identifier ASSIGN d=expression {$_splitedExpressionsWithCommaAndKey.put($c._identifier, $d._expression);} )*)?
     ;
@@ -301,9 +302,8 @@ listValue returns[ListValue _listValue]:
     ;
 
 boolValue returns[BoolValue _boolValue]:
-    bool=TRUE {$_boolValue = new BoolValue(true);} |
-    bool=FALSE {$_boolValue = new BoolValue(false);}
-    {$_boolValue.setLine($bool.line);}
+    bool=TRUE {$_boolValue = new BoolValue(true); $_boolValue.setLine($bool.line);} |
+    bool=FALSE {$_boolValue = new BoolValue(false); $_boolValue.setLine($bool.line);}
     ;
 
 voidValue returns [VoidValue _voidValue]:

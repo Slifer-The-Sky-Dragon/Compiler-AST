@@ -11,6 +11,10 @@ import main.ast.nodes.expression.values.primitive.IntValue;
 import main.ast.nodes.expression.values.primitive.StringValue;
 import main.ast.nodes.statement.*;
 
+import javax.swing.plaf.nimbus.State;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ASTTreePrinter extends Visitor<Void> {
 
@@ -20,124 +24,186 @@ public class ASTTreePrinter extends Visitor<Void> {
 
     @Override
     public Void visit(Program program) {
-       //ToDo
-        messagePrinter(program.getLine(),program.toString());
-
+        messagePrinter(program.getLine(), program.toString());
+        program.getMain().accept(this);
+        ArrayList<FunctionDeclaration> program_funcs = program.getFunctions();
+        if(!program_funcs.isEmpty()){
+            for(FunctionDeclaration cur_func : program_funcs){
+                cur_func.accept(this);
+            }
+        }
         return null;
     }
 
     @Override
     public Void visit(FunctionDeclaration funcDeclaration) {
-        //ToDo
+        messagePrinter(funcDeclaration.getLine(), funcDeclaration.toString());
+        funcDeclaration.getFunctionName().accept(this);
+        ArrayList<Identifier> function_args = funcDeclaration.getArgs();
+        for (Expression cur_arg : function_args) {
+            cur_arg.accept(this);
+        }
+        funcDeclaration.getBody().accept(this);
         return null;
     }
 
     @Override
     public Void visit(MainDeclaration mainDeclaration) {
-        //ToDo
+        messagePrinter(mainDeclaration.getLine() , mainDeclaration.toString());
+        mainDeclaration.getBody().accept(this);
         return null;
     }
 
 
     @Override
     public Void visit(BlockStmt blockStmt) {
-        //ToDo
+        messagePrinter(blockStmt.getLine(), blockStmt.toString());
+        ArrayList<Statement> block_statements = blockStmt.getStatements();
+        for(Statement cur_statement : block_statements){
+            cur_statement.accept(this);
+        }
         return null;
     }
 
     @Override
     public Void visit(ConditionalStmt conditionalStmt) {
-        //ToDo
+        messagePrinter(conditionalStmt.getLine(), conditionalStmt.toString());
+        conditionalStmt.getCondition().accept(this);
+        conditionalStmt.getThenBody().accept(this);
+        Statement else_body = conditionalStmt.getElseBody();
+        if(else_body != null)
+            else_body.accept(this);
         return null;
     }
 
     @Override
     public Void visit(FunctionCallStmt funcCallStmt) {
-        //ToDo
+        messagePrinter(funcCallStmt.getLine() , funcCallStmt.toString());
+        funcCallStmt.getFunctionCall().accept(this);
         return null;
     }
 
     @Override
     public Void visit(PrintStmt print) {
-        //ToDo
+        messagePrinter(print.getLine(), print.toString());
+        print.getArg().accept(this);
         return null;
     }
 
     @Override
     public Void visit(ReturnStmt returnStmt) {
-        //ToDo
+        messagePrinter(returnStmt.getLine(), returnStmt.toString());
+        returnStmt.getReturnedExpr().accept(this);
         return null;
     }
 
     @Override
     public Void visit(BinaryExpression binaryExpression) {
-        //ToDo
+        messagePrinter(binaryExpression.getLine() , binaryExpression.toString());
+        binaryExpression.getFirstOperand().accept(this);
+        binaryExpression.getSecondOperand().accept(this);
         return null;
     }
 
     @Override
     public Void visit(UnaryExpression unaryExpression) {
-        //ToDo
+        messagePrinter(unaryExpression.getLine(), unaryExpression.toString());
+        unaryExpression.getOperand().accept(this);
         return null;
     }
 
     @Override
     public Void visit(AnonymousFunction anonymousFunction) {
-        //ToDo
+        messagePrinter(anonymousFunction.getLine(), anonymousFunction.toString());
+        ArrayList<Identifier> func_args = anonymousFunction.getArgs();
+        if(!func_args.isEmpty()){
+            for(Identifier cur_arg : func_args){
+                cur_arg.accept(this);
+            }
+        }
+        anonymousFunction.getBody().accept(this);
         return null;
     }
 
     @Override
     public Void visit(Identifier identifier) {
-        //ToDo
+        messagePrinter(identifier.getLine(), identifier.toString());
         return null;
     }
 
     @Override
     public Void visit(ListAccessByIndex listAccessByIndex) {
-        //ToDo
+        messagePrinter(listAccessByIndex.getLine(), listAccessByIndex.toString());
+        listAccessByIndex.getInstance().accept(this);
+        listAccessByIndex.getIndex().accept(this);
         return null;
     }
 
     @Override
     public Void visit(ListSize listSize) {
-        //ToDo
+        messagePrinter(listSize.getLine(), listSize.toString());
+        listSize.getInstance().accept(this);
         return null;
     }
 
     @Override
-    public Void visit(FunctionCall funcCall) {
-        //ToDo
+    public Void visit(FunctionCall funcCall) { //TODO Need Fucntion Name
+        messagePrinter(funcCall.getLine(), funcCall.toString());
+        Expression cur_expr = funcCall.getInstance();
+        if(cur_expr != null)
+            cur_expr.accept(this);
+        ArrayList<Expression> function_args = funcCall.getArgs();
+        Map<Identifier, Expression> function_args_with_keys = funcCall.getArgsWithKey();
+
+        if(!function_args.isEmpty()) {
+            for (Expression cur_arg : function_args) {
+                cur_arg.accept(this);
+            }
+        }
+        else if(!function_args_with_keys.isEmpty()){
+            for (Identifier cur_arg_id : function_args_with_keys.keySet()){
+                Expression cur_arg_expr = function_args_with_keys.get(cur_arg_id);
+                cur_arg_id.accept(this);
+                cur_arg_expr.accept(this);
+            }
+        }
+
         return null;
     }
 
     @Override
     public Void visit(ListValue listValue) {
-        //ToDo
+        messagePrinter(listValue.getLine(), listValue.toString());
+        ArrayList<Expression> list_exprs = listValue.getElements();
+        if(!list_exprs.isEmpty()){
+            for(Expression cur_arg : list_exprs){
+                cur_arg.accept(this);
+            }
+        }
         return null;
     }
 
     @Override
     public Void visit(IntValue intValue) {
-        //ToDo
+        messagePrinter(intValue.getLine(), intValue.toString());
         return null;
     }
 
     @Override
     public Void visit(BoolValue boolValue) {
-        //ToDo
+        messagePrinter(boolValue.getLine(), boolValue.toString());
         return null;
     }
 
     @Override
-    public Void visit(StringValue stringValue) {
-        //ToDo
+    public Void visit(StringValue stringValue) { //TODO Check ""
+        messagePrinter(stringValue.getLine(), stringValue.toString());
         return null;
     }
 
     @Override
     public Void visit(VoidValue voidValue) {
-        //ToDo
+        messagePrinter(voidValue.getLine(), voidValue.toString());
         return null;
     }
 
