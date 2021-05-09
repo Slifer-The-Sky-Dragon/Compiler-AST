@@ -72,7 +72,7 @@ functionCall returns[FunctionCall _functionCall] locals[Expression instance]:
     } RPAR)
     ;
 
-functionArguments returns[ArrayList<Expression> _args = new ArrayList<Expression>(), Map<Identifier, Expression> _argsWithKey = new HashMap<>()]:
+functionArguments returns[ArrayList<Expression> _args, Map<Identifier, Expression> _argsWithKey]:
     a=splitedExpressionsWithComma {$_args = $a._splitedExpressionsWithComma;} |
     b=splitedExpressionsWithCommaAndKey {$_argsWithKey = $b._splitedExpressionsWithCommaAndKey;}
     ;
