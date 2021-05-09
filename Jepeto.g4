@@ -38,8 +38,8 @@ functionDeclaration returns[FunctionDeclaration _functionDeclaration] locals[Ide
     }
     ;
 
-functionArgumentsDeclaration returns[ArrayList<Identifier> _functionArgumentsDeclaration = new ArrayList<Identifier>()] locals[Identifier Arg]:
-    LPAR (a=IDENTIFIER {$Arg = new Identifier($a.text); $Arg.setLine($a.line); $_functionArgumentsDeclaration.add($Arg);}
+functionArgumentsDeclaration returns[ArrayList<Identifier> _functionArgumentsDeclaration = new ArrayList<Identifier>(), int _line] locals[Identifier Arg]:
+    LPAR {$_line = $LPAR.line;} (a=IDENTIFIER {$Arg = new Identifier($a.text); $Arg.setLine($a.line); $_functionArgumentsDeclaration.add($Arg);}
     (COMMA b=IDENTIFIER {$Arg = new Identifier($b.text); $Arg.setLine($b.line); $_functionArgumentsDeclaration.add($Arg);})*)? RPAR
     ;
 
@@ -56,16 +56,19 @@ main returns[MainDeclaration _main]:
     {$_main.setLine($MAIN.line);}
     ;
 
-functionCall returns[FunctionCall _functionCall] :
-    identifier (lpar1=LPAR a=functionArguments
+functionCall returns[FunctionCall _functionCall] locals[Expression instance]:
+    identifier {$instance = $identifier._identifier;}
+    (lpar1=LPAR a=functionArguments
     {
-        $_functionCall = new FunctionCall($_functionCall, $a._args, $a._argsWithKey);
+        $_functionCall = new FunctionCall($instance, $a._args, $a._argsWithKey);
         $_functionCall.setLine($lpar1.line);
+        $instance = $_functionCall;
     } RPAR)*
     (lpar2=LPAR b=functionArguments
     {
-        $_functionCall = new FunctionCall($_functionCall, $b._args, $b._argsWithKey);
+        $_functionCall = new FunctionCall($instance, $b._args, $b._argsWithKey);
         $_functionCall.setLine($lpar2.line);
+        $instance = $_functionCall;
     } RPAR)
     ;
 
@@ -279,7 +282,7 @@ otherExpression returns[Expression _otherExpression]:
 
 anonymousFunction returns[AnonymousFunction _anonymousFunction]:
     a=functionArgumentsDeclaration {$_anonymousFunction = new AnonymousFunction($a._functionArgumentsDeclaration);}
-    ARROW block {$_anonymousFunction.setBody($block._block);}
+    ARROW block {$_anonymousFunction.setBody($block._block); $_anonymousFunction.setLine($a._line);}
     ;
 
 sizeExpression returns[int _line]:
@@ -302,8 +305,9 @@ listValue returns[ListValue _listValue]:
     ;
 
 boolValue returns[BoolValue _boolValue]:
-    bool=TRUE {$_boolValue = new BoolValue(true); $_boolValue.setLine($bool.line);} |
-    bool=FALSE {$_boolValue = new BoolValue(false); $_boolValue.setLine($bool.line);}
+    (bool=TRUE {$_boolValue = new BoolValue(true);} |
+    bool=FALSE {$_boolValue = new BoolValue(false);})
+    {$_boolValue.setLine($bool.line);}
     ;
 
 voidValue returns [VoidValue _voidValue]:
