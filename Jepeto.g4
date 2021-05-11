@@ -261,17 +261,26 @@ appendExpression returns [Expression _appendExpression]:
     }
     )*;
 
-accessExpression returns[Expression _accessExpression]: ///////////
+accessExpression returns[Expression _accessExpression]:
     otherExpression {$_accessExpression = $otherExpression._otherExpression;}
-    (LPAR functionArguments RPAR)*
+    (LPAR functionArguments RPAR
+    {
+        $_accessExpression = new FunctionCall($_accessExpression, $functionArguments._args, $functionArguments._argsWithKey);
+        $_accessExpression.setLine($LPAR.line);
+    }
+    )*
     (LBRACK expression RBRACK
     {
         $_accessExpression = new ListAccessByIndex($_accessExpression, $expression._expression);
         $_accessExpression.setLine($LBRACK.line);
     }
     )*
-    (sizeExpression {$_accessExpression = new ListSize($_accessExpression); $_accessExpression.setLine($sizeExpression._line);} )*
-    ;
+    (sizeExpression
+    {
+        $_accessExpression = new ListSize($_accessExpression);
+        $_accessExpression.setLine($sizeExpression._line);
+    }
+    )*;
 
 otherExpression returns[Expression _otherExpression]:
     values {$_otherExpression = $values._values;} |
