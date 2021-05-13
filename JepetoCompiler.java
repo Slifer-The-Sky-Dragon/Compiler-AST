@@ -15,7 +15,9 @@ public class JepetoCompiler {
 
         //ToDo
 
-        ASTTreePrinter printerTree = new ASTTreePrinter();
+
+        //ASTTreePrinter printerTree = new ASTTreePrinter();
+        NameAnalyser printerTree = new NameAnalyser();
         printerTree.visit(program);
 
     }
