@@ -300,7 +300,7 @@ sizeExpression returns[int _line]:
 
 values returns [Value _values] locals[IntValue IntVal, StringValue StrVal]:
     boolValue {$_values = $boolValue._boolValue;} |
-    STRING_VALUE {$StrVal = new StringValue($STRING_VALUE.text); $StrVal.setLine($STRING_VALUE.line); $_values = $StrVal;}|
+    STRING_VALUE {$StrVal = new StringValue($STRING_VALUE.text.substring(1,$STRING_VALUE.text.length()-1)); $StrVal.setLine($STRING_VALUE.line); $_values = $StrVal;}|
     INT_VALUE {$IntVal = new IntValue($INT_VALUE.int); $IntVal.setLine($INT_VALUE.line); $_values = $IntVal;} |
     listValue {$_values = $listValue._listValue;}
     ;
