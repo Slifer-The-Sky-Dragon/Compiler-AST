@@ -11,8 +11,11 @@ import main.ast.nodes.expression.values.primitive.IntValue;
 import main.ast.nodes.expression.values.primitive.StringValue;
 import main.ast.nodes.statement.*;
 
+import java.util.ArrayList;
+
 public class Visitor<T> implements IVisitor<T> {
     public boolean compiler_error_exists;
+    public ArrayList<String> bad_functions = new ArrayList<String>();
     @Override
     public T visit(Program program) { return null; }
 

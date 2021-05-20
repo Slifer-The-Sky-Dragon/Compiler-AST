@@ -251,11 +251,20 @@ public class NameAnalyser extends Visitor<Void> {
         if(cur_func_id != null) {
             try {
                 cur_func = (FunctionSymbolTableItem) SymbolTable.root.getItem("Function_" + cur_func_id.getName());
-            }catch(ItemNotFoundException e){ // TODO CE:Function not Declared
-                compiler_error_exists = true;
-                FunctionNotDeclared new_func_not_declared = new FunctionNotDeclared(cur_func_id.getLine(), cur_func_id.getName());
-                System.out.println(new_func_not_declared.getMessage());
-                is_func_available = false;
+            }
+            catch(ItemNotFoundException e){ // TODO CE:Function not Declared
+                try{
+                    VariableSymbolTableItem tmp = (VariableSymbolTableItem) SymbolTable.top.getItem("Var_" + cur_func_id.getName());
+                }
+                catch(ItemNotFoundException ee){
+                    if(!bad_functions.contains(cur_func_id.getName())) {
+                        compiler_error_exists = true;
+                        FunctionNotDeclared new_func_not_declared = new FunctionNotDeclared(cur_func_id.getLine(), cur_func_id.getName());
+                        System.out.println(new_func_not_declared.getMessage());
+                        bad_functions.add(cur_func_id.getName());
+                        is_func_available = false;
+                    }
+                }
             }
         }
 

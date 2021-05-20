@@ -2831,7 +2831,7 @@ public class JepetoParser extends Parser {
 				{
 				setState(472);
 				((ValuesContext)_localctx).STRING_VALUE = match(STRING_VALUE);
-				((ValuesContext)_localctx).StrVal =  new StringValue((((ValuesContext)_localctx).STRING_VALUE!=null?((ValuesContext)_localctx).STRING_VALUE.getText():null)); _localctx.StrVal.setLine((((ValuesContext)_localctx).STRING_VALUE!=null?((ValuesContext)_localctx).STRING_VALUE.getLine():0)); ((ValuesContext)_localctx)._values =  _localctx.StrVal;
+				((ValuesContext)_localctx).StrVal =  new StringValue((((ValuesContext)_localctx).STRING_VALUE!=null?((ValuesContext)_localctx).STRING_VALUE.getText():null).substring(1,(((ValuesContext)_localctx).STRING_VALUE!=null?((ValuesContext)_localctx).STRING_VALUE.getText():null).length()-1)); _localctx.StrVal.setLine((((ValuesContext)_localctx).STRING_VALUE!=null?((ValuesContext)_localctx).STRING_VALUE.getLine():0)); ((ValuesContext)_localctx)._values =  _localctx.StrVal;
 				}
 				break;
 			case INT_VALUE:
