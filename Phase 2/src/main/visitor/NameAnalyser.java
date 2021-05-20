@@ -257,13 +257,10 @@ public class NameAnalyser extends Visitor<Void> {
                     VariableSymbolTableItem tmp = (VariableSymbolTableItem) SymbolTable.top.getItem("Var_" + cur_func_id.getName());
                 }
                 catch(ItemNotFoundException ee){
-                    if(!bad_functions.contains(cur_func_id.getName())) {
-                        compiler_error_exists = true;
-                        FunctionNotDeclared new_func_not_declared = new FunctionNotDeclared(cur_func_id.getLine(), cur_func_id.getName());
-                        System.out.println(new_func_not_declared.getMessage());
-                        bad_functions.add(cur_func_id.getName());
-                        is_func_available = false;
-                    }
+                    compiler_error_exists = true;
+                    FunctionNotDeclared new_func_not_declared = new FunctionNotDeclared(cur_func_id.getLine(), cur_func_id.getName());
+                    System.out.println(new_func_not_declared.getMessage());
+                    is_func_available = false;
                 }
             }
         }
